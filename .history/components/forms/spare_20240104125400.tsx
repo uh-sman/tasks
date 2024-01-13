@@ -1,0 +1,478 @@
+// "use client";
+// // import getConfig from 'next/config';
+
+// import React, { useState } from "react";
+// import { useRouter, useParams } from "next/navigation";
+// import Image from "next/image";
+// import Input from "./Input";
+// import Button from "./Button";
+// import axios from "axios";
+
+// interface UserRegistration {
+//   name: string;
+//   email: string;
+//   password: string;
+//   avatar: File | Blob | string | null;
+// }
+// // import { CldImage } from "next-cloudinary";
+// // import { File } from "buffer";
+// const AuthForm = () => {
+//   // const
+//   const router = useRouter();
+//   const params = useParams();
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [formState, setFormState] = useState<"LOGIN" | "SIGNUP">("SIGNUP");
+//   const [isLogin, setIsLogin] = useState("SIGNUP");
+//   const [form, setForm] = useState({
+//     name: "",
+//     email: "",
+//     password: "",
+//     avatar: null as File | Blob | string | null,
+//   });
+
+//   const requestBody: UserRegistration = {
+//     name: form.name,
+//     email: form.email,
+//     password: form.password,
+//     avatar: form.avatar,
+//   };
+//   const createPost = async () => {
+//     // ...
+
+//     const { avatar } = form;
+
+//     if (avatar) {
+//       const formData = new FormData();
+//       formData.append("file", avatar);
+//       formData.append("upload_preset", "pya1lxcg" || "");
+//       formData.append("cloud_name", "dmidoz6fi" || "");
+//       formData.append("folder", "avatar");
+
+//       console.log("env", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+
+//       try {
+//         const cloudinaryResponse = await fetch(
+//           `https://api.cloudinary.com/v1_1/dmidoz6fi/image/upload`,
+//           {
+//             method: "POST",
+//             body: formData,
+//           }
+//         );
+
+//         const cloudinaryData = await cloudinaryResponse.json();
+//         console.log("Cloudinary data:", cloudinaryData?.public_id);
+//         setForm({ ...form, avatar: cloudinaryData?.public_id as string });
+
+//         if (formState === "SIGNUP") {
+//           const userRegistrationResponse = await axios.post(
+//             "http://localhost:4000/api/users/register",
+//             form
+//           );
+//           console.log(
+//             "User registration response:",
+//             userRegistrationResponse.data
+//           );
+//           router.push(`/dashboard/${userRegistrationResponse.data.userId}`);
+//           // Handle the response or update the state as needed
+//         }
+//         if (formState === "LOGIN") {
+//           handleLogin();
+//           // const userRegistrationResponse = await axios.post('http://localhost:4000/api/users/login', form);
+//           // console.log('User registration response:', userRegistrationResponse.data);
+//           // router.push(`/dashboard/${userRegistrationResponse.data.userId}`)
+//           // Handle the response or update the state as needed
+//         }
+//       } catch (error) {
+//         console.error("Error:", error);
+//         // Handle errors here if needed
+//       }
+//     }
+//     // ...
+//   };
+//   // try {
+//   //   if(formState === 'SIGNUP'){
+//   //     const response = await axios.post(`http://localhost:4000/api/users/register`, form)
+//   //     console.log('response',response)
+//   //     router.push('/dashboard')
+//   //     }
+//   //     if(formState === 'LOGIN') {
+//   //       console.log('form...',form.email)
+//   //       // const response = await axios.post(`http://localhost:4000/api/users/login`, form)
+//   //       // console.log('response',response)
+//   //       // router.push('/dashboard')
+//   //     }
+//   // } catch (error) {
+//   //   console.log(error)
+//   // }
+//   //   console.log(form)
+
+//   const handleLogin = async () => {
+//     const userRegistrationResponse = await axios.post(
+//       "http://localhost:4000/api/users/login",
+//       form
+//     );
+//     console.log("User registration response:", userRegistrationResponse.data);
+//     router.push(`/dashboard/${userRegistrationResponse.data.userId}`);
+//   };
+
+//   const handleFormUpload = async () => {
+//     if (formState === "LOGIN") {
+//       const response = await axios.post(
+//         "http://localhost:4000/api/users/login",
+//         {
+//           ...form,
+//         }
+//       );
+//       console.log(response);
+//     }
+//     if (formState === "SIGNUP") {
+//       const response = await axios.post(
+//         "http://localhost:4000/api/users/register",
+//         requestBody
+//       );
+//       console.log(response);
+//     }
+//     if (formState === "LOGIN") {
+//       console.log({ email: form.email, password: form.password });
+//       // const response = await axios.post('http://localhost:4000/api/users/login', {
+//       //   email: form.email,
+//       //   password: form.password
+//       // })
+//       //      console.log(response)
+//     }
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     createPost();
+//   };
+
+//   const handleChange = (
+//     value: string,
+//     data: File | null,
+//     fieldName: string
+//   ) => {
+//     setForm((prevForm) => ({
+//       ...prevForm,
+//       [fieldName]: fieldName === "avatar" ? data : value,
+//     }));
+//   };
+//   // console.log('value', value)
+//   const handleToggleForm = (newState: "LOGIN" | "SIGNUP") => {
+//     setFormState(newState);
+//   };
+//   return (
+//     <div>
+//       <div className="flex">
+//         <div className="bg-white flex flex-col flex-1 justify-center items-center">
+//           <div className="flex">
+//             <Image
+//               src="/images/logo_1.png"
+//               width="350"
+//               height={75}
+//               alt="Logo"
+//               className=""
+//             />
+//           </div>
+//           <p className="font-semibold italic text-black">
+//             ...the future is now
+//           </p>
+//         </div>
+//         <div className="flex min-h-screen justify-center bg-[#F5E0B8] p-0 w-1/2">
+//           <div className="flex justify-center flex-col space-y-4">
+//             <div>
+//               <h1 className="text-4xl text-center font-bold text-[#008F97]">
+//                 {formState === "SIGNUP" ? "Signup" : "Login"}
+//               </h1>
+//             </div>
+//             <div className="w-72 md:w-[420px] lg:w-[560px] flex-shrink-0 min-w-sm bg-base-100">
+//               {/* <form onSubmit={handleSubmit}> */}
+//               <form onSubmit={handleSubmit}>
+//                 <div className="form-control space-y-10">
+//                   {formState === "SIGNUP" ? (
+//                     <Input
+//                       onChange={(value) => handleChange(value, null, "name")}
+//                       id="name"
+//                       className="block outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//                       placeholder="name"
+//                       type="text"
+//                     />
+//                   ) : null}
+//                   <Input
+//                     onChange={(value) => handleChange(value, null, "email")}
+//                     id="email"
+//                     className="block outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//                     placeholder="email"
+//                     type="email"
+//                   />
+//                   <Input
+//                     onChange={(value) => handleChange(value, null, "password")}
+//                     id="password"
+//                     className="block outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//                     placeholder="password"
+//                     type="password"
+//                   />
+
+//                   {formState === "SIGNUP" ? (
+//                     // @ts-ignore
+//                     <Input
+//                       onChange={(value, file: File | null) =>
+//                         handleChange(value, file, "avatar")
+//                       }
+//                       id="avatar"
+//                       className="block outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//                       placeholder="avatar"
+//                       type="file"
+//                     />
+//                   ) : null}
+//                   {/* @ts-ignore */}
+//                   <Button
+//                     className="bg-teal-500 w-full rounded-md py-4 font-medium text-white"
+//                     disabled={isLoading}
+//                     type="submit"
+//                   >
+//                     {formState === "SIGNUP" ? "Signup" : "Login"}
+//                   </Button>
+//                 </div>
+//                 {formState === "SIGNUP" ? (
+//                   <p className="font-semibold text-md">
+//                     {formState === "SIGNUP"
+//                       ? "already have an account?"
+//                       : "Don`t have an account"}{" "}
+//                     <button
+//                       onClick={() => setFormState("LOGIN")}
+//                       className="underline cursor-pointer"
+//                     >
+//                       {formState === "SIGNUP" ? "login" : "signup"}
+//                     </button>
+//                   </p>
+//                 ) : (
+//                   <p className="font-semibold text-md">
+//                     {formState === "LOGIN"
+//                       ? "Don`t have an account" 
+//                       : "already have an account?"}{" "}
+//                     <button
+//                       onClick={() => setFormState("SIGNUP")}
+//                       className="underline cursor-pointer"
+//                     >
+//                       {formState === "LOGIN" ? "signup" : "login"}
+//                     </button>
+//                   </p>
+//                 )}
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AuthForm;
+
+
+
+
+// HANDLE LOGIN FUNCTION SPARE
+
+
+
+// const login = async () => {
+//     const { email, password } = form
+//     try {
+//         const response = await axios.post('http://localhost:4000/api/users/login', {
+//             email,
+//             password
+//         })
+//         console.log(response)
+//         sessionStorage.setItem('token', response.data.token)
+//         // localStorage.setItem('token', response.data.token
+//         redirect
+//         //     email: form.email,
+//         //     password: form.password
+//         // })
+//     } catch (error) {
+//         console.log(error)
+//     }
+//   }
+
+
+
+
+
+
+
+
+
+
+
+
+// 
+// {/* <div>
+// <div className="flex">
+//   <div className="bg-white hidden lg:flex  justify-center items-center w-1/2">
+//     <div className="flex">
+//       <figure>
+//         <Image
+//           src="/images/logo_1.png"
+//           alt="Logo"
+//           width={350}
+//           height={350}
+//         />
+//       </figure>
+//     </div>
+//   </div>
+//   {/* Second flex item */}
+//   <div className="flex min-h-screen justify-center bg-[#F5E0B8] p-0 w-full lg:w-1/2">
+//     <div className="flex flex-col space-y-4">
+//       <div>
+//         <h1 className="text-4xl text-center font-bold text-[#008F97]">
+//           {/* {formState === "SIGNUP" ? "Create Admin" : "Login"} */}
+//         </h1>
+//       </div>
+//       <div className="w-72 md:w-[420px] flex-shrink-0 lg:w-[560px] min-w-sm bg-base-100">
+//         <form className="" onSubmit={() => {}}>
+//           <div className="form-control  items-center grid grid-cols-2">
+//            {/* {formState === 'SIGNUP' &&  */}
+//            <Input
+//           //  onChange={() => {}}
+//               onChange={(value) => handleChange(value, null, "name")}
+//               id="name"
+//               className="block h-10 outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//               placeholder="name"
+//               type="text"
+//             />
+//             {/* } */}
+//             <Input
+//             // onChange={() => {}}
+//               onChange={(value) => handleChange(value, null, "email")}
+//               id="email"
+//               className="block h-10 outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//               placeholder="email"
+//               type="email"
+//             />
+//             <Input
+//             onChange={() => {}}
+//               // onChange={(value) => handleChange(value, null, "password")}
+//               id="password"
+//               className="block h-10 outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//               placeholder="password"
+//               type="password"
+//             />
+//           {/* { formState === 'SIGNUP' &&   */}
+//           <Input
+//           // onChange={() => {}}
+//               // @ts-ignore
+//               onChange={(value, file: File | null) =>
+//                 handleChange(value, file, "avatar")
+//               }
+//               id="avatar"
+//               className="block h-10 outline-none w-full rounded-md border-none py-[12px] pl-7 pr-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+//               placeholder="avatar"
+//               type="file"
+//             />
+//             {/* } */}
+         
+//             <button
+//             // onClick={handleAuth}
+//               className="bg-teal-500 w-full rounded-md py-4 font-medium text-white"
+//               // disabled={isLoading}
+//               type="submit"
+//             >
+//               {/* {formState === 'LOGIN' ? 'login' : 'Signup'} */}
+//             </button>
+//             <button onClick={() => {}} className="bg-teal-500 flex justify-center items-center gap-4 w-full rounded-md py-4 font-medium text-white">
+//               {/* <FcGoogle className='w-10 h-10' /> */}
+//               <p className="text-center">Sign in with Google</p>
+//             </button>
+//             {/* <p className="font-semibold text-md">
+//              {formState === 'LOGIN' ? "Don't have an account?" : 'already have an account?'}
+//               <small
+//                 onClick={toggleVariant}
+//                 className="underline cursor-pointer ml-1 text-lg"
+//               >
+//                 {formState === 'LOGIN' ? 'Create one' :  'login' }
+//               </small>
+//             </p> */}
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   </div>
+// </div>
+// </div> */}
+
+
+
+// REMAINING FORM PART
+
+// {/* <div className="flex flex-wrap -mx-3 mb-6">
+//                   <div className="w-full px-3">
+//                     <label
+//                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+//                       htmlFor="grid-password"
+//                     >
+//                       Password
+//                     </label>
+//                     <input
+//                       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+//                       id="grid-password"
+//                       type="password"
+//                       placeholder="******************"
+//                     />
+//                     <p className="text-gray-600 text-xs italic">
+//                       Make it as long and as crazy as you'd like
+//                     </p>
+//                   </div>
+//                 </div>
+//                 <div className="flex flex-wrap -mx-3 mb-2">
+//                   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+//                     <label
+//                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+//                       htmlFor="grid-city"
+//                     >
+//                       City
+//                     </label>
+//                     <input
+//                       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+//                       id="grid-city"
+//                       type="text"
+//                       placeholder="Albuquerque"
+//                     />
+//                   </div>
+//                   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+//                     <label
+//                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+//                       htmlFor="grid-state"
+//                     >
+//                       State
+//                     </label>
+//                     <div className="relative">
+//                       <select
+//                         className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+//                         id="grid-state"
+//                       >
+//                         <option>New Mexico</option>
+//                         <option>Missouri</option>
+//                         <option>Texas</option>
+//                       </select>
+//                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+//                         {/* <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg> */}
+//                       </div>
+//                     </div>
+//                   </div>
+//                   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+//                     <label
+//                       className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+//                       htmlFor="grid-zip"
+//                     >
+//                       Zip
+//                     </label>
+//                     <input
+//                       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+//                       id="grid-zip"
+//                       type="text"
+//                       placeholder="90210"
+//                     />
+//                   </div>
+//                 </div> */}
